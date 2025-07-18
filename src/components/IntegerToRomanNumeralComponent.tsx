@@ -1,3 +1,5 @@
+"use client"; //use of useState https://nextjs.org/docs/app/api-reference/directives/use-client
+
 import React from 'react';
 import {
   View,

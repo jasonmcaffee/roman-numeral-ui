@@ -1,4 +1,4 @@
-"use client";
+"use client"; //use of useRouter https://nextjs.org/docs/app/api-reference/directives/use-client
 
 import { Provider, defaultTheme } from '@adobe/react-spectrum';
 import { useRouter } from 'next/navigation';
