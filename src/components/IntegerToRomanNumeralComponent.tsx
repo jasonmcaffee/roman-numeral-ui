@@ -9,7 +9,6 @@ import {
   TextField,
   Form,
   InlineAlert,
-  Content
 } from '@adobe/react-spectrum';
 import { Flex } from '@react-spectrum/layout';
 import { useState, useCallback } from 'react';
@@ -66,7 +65,7 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
           {/* Input Section */}
           <Flex
             direction="column"
-            gap="size-200"
+            gap="size-400"
           >
             {/* TextField with proper validation and accessibility */}
             {/* Based on react-spectrum TextField.mdx: "Validation" and "Labeling" sections */}
@@ -77,7 +76,6 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
               onChange={handleInputChange}
               isRequired
               necessityIndicator="label"
-              description="Enter a number between 1 and 3999 to convert to Roman numerals."
               validationState={error ? 'invalid' : undefined}
               errorMessage={error}
               isDisabled={isLoading}
@@ -98,7 +96,7 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
 
         {/* Result Section */}
         {result && (
-          <View marginTop="size-300">
+          <View>
             <Text>
               <strong>Roman numeral:</strong> {result}
             </Text>
