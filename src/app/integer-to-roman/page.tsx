@@ -1,11 +1,13 @@
 "use client";
 
-import {
-  View,
-  Heading,
-  Text,
-  Button, TextField
+import { 
+  View, 
+  Heading, 
+  Text, 
+  Button, 
+  TextField
 } from '@adobe/react-spectrum';
+import { Flex } from '@react-spectrum/layout';
 import ReactSpectrumProvider from '@/components/ReactSpectrumProvider';
 import { appConfig } from '@/config/appConfig';
 import { Configuration, RomanNumeralApi } from '@/clients/roman-numeral-client';
@@ -27,8 +29,8 @@ function IntegerToRomanContent() {
 
   // Create API client with useMemo to prevent recreation on every render
   const api = useMemo(() => {
-    const apiConfig = new Configuration({
-      basePath: appConfig.getRomanNumeralClientConfig().baseUrl
+    const apiConfig = new Configuration({ 
+      basePath: appConfig.getRomanNumeralClientConfig().baseUrl 
     });
     return new RomanNumeralApi(apiConfig);
   }, []);
@@ -66,30 +68,27 @@ function IntegerToRomanContent() {
   }, []);
 
   return (
-    <View
-      padding="size-1000"
+    <View 
+      padding="size-1000" 
       maxWidth="700px"
       margin="0 auto"
       height="100vh"
-      UNSAFE_style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center'
-      }}
     >
-      <View>
+      <Flex 
+        direction="column" 
+        justifyContent="center" 
+        height="100%"
+        gap="size-400"
+      >
         {/* Title */}
-        <Heading level={1} marginBottom="size-300">
+        <Heading level={1} marginBottom="size-300" UNSAFE_style={{ textAlign: 'center' }}>
           Roman numeral converter
         </Heading>
 
         {/* Input Section */}
-        <View
-          UNSAFE_style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--spectrum-global-dimension-size-200)'
-          }}
+        <Flex 
+          direction="column" 
+          gap="size-200"
         >
           <TextField
             label={"Enter a number"}
@@ -119,7 +118,7 @@ function IntegerToRomanContent() {
           >
             {isLoading ? 'Converting...' : 'Convert to roman numeral'}
           </Button>
-        </View>
+        </Flex>
 
         {/* Result Section */}
         {result && (
@@ -138,7 +137,7 @@ function IntegerToRomanContent() {
             </Text>
           </View>
         )}
-      </View>
+      </Flex>
     </View>
   );
 }

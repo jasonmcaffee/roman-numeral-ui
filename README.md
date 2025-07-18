@@ -9,6 +9,38 @@ A Next.js application for converting between integers and Roman numerals, built 
 - Responsive design that works on all devices
 - Built with Next.js 15 and TypeScript
 
+## Dependencies 
+
+### Adobe Spectrum
+
+#### 1. React Stately (@react-stately/*) - State Management Layer
+Platform-agnostic state management
+Responsibilities:
+- Complex logic for collections, selection, and component state
+- No UI rendering, just state management
+- Cross-platform (web, React Native, UXP)
+- No theme or design system specific logic
+
+Examples: `useNumberFieldState`, `useToggleState`, `useSelectState`
+
+#### 2. React Aria (@react-aria/*) - Behavior & Accessibility Layer
+Platform-specific behavior and accessibility
+Responsibilities:
+- Event handling, focus management, accessibility, internationalization
+- Platform-specific (DOM, React Native, etc.)
+- No theme or design system specific logic
+- Returns props to be spread onto rendered elements
+
+Examples: `useNumberField`, `useButton`, `useTextField`
+
+#### 3. React Spectrum (@adobe/react-spectrum) - UI Layer
+Theme and design system specific
+Responsibilities:
+- Actual DOM structure and styling
+- Uses props from behavior hook and state from state hook
+- Implements Adobe's Spectrum design system
+- Can be customized with themes
+
 ## Getting Started
 
 First, install the dependencies:
