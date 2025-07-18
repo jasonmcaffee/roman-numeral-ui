@@ -67,7 +67,6 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
           <Flex
             direction="column"
             gap="size-200"
-            marginBottom="size-300"
           >
             {/* TextField with proper validation and accessibility */}
             {/* Based on react-spectrum TextField.mdx: "Validation" and "Labeling" sections */}
@@ -109,10 +108,8 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
         {/* Form-level error alert - positioned at bottom */}
         {/* Based on react-spectrum Form.mdx: "Focus management" section */}
         {error && (
-          <InlineAlert variant="negative" marginTop="size-200">
-            <Content>
-              Please fix the errors below and try again.
-            </Content>
+          <InlineAlert variant="negative" >
+            Please fix the errors below and try again.
           </InlineAlert>
         )}
       </Flex>
