@@ -14,11 +14,12 @@ import LoadingFallback from './LoadingFallback';
  * Provider with client-side rendering protection to prevent SSR issues.
  *
  * Key Features:
- * - Provides React Spectrum theme (defaultTheme)
+ * - Provides React Spectrum theme (automatically detects system theme)
  * - Configures locale settings (English)
  * - Integrates with Next.js router for navigation
  * - Ensures client-side only rendering to prevent SSR errors with the spectrum library (e.g. i18n was having issues)
  * - Shows loading state while components initialize
+ * - Automatically switches theme based on system settings
  *
  * This component should wrap any part of the application that uses
  * React Spectrum components. It handles the complex setup required

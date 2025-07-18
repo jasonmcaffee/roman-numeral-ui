@@ -1,7 +1,7 @@
 export const appConfig = {
-    getRomanNumeralClientConfig(){
+    getRomanNumeralClientConfig() {
         return {
-            baseUrl: "http://localhost:3000",
+            baseUrl: `http://localhost:3000`,
         };
     }
 };

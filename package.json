@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "@adobe/react-spectrum": "^3.42.2",
+    "@react-aria/button": "^3.13.3",
+    "@react-aria/i18n": "^3.12.10",
+    "@react-aria/numberfield": "^3.11.16",
+    "@react-stately/numberfield": "^3.9.13",
     "glob": "^11.0.3",
     "next": "15.4.1",
     "react": "19.1.0",
