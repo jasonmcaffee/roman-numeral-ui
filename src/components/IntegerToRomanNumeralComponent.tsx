@@ -6,59 +6,38 @@ import {
   Heading,
   Text,
   Button,
-  TextField
+  TextField,
+  Form,
+  InlineAlert,
+  Content
 } from '@adobe/react-spectrum';
 import { Flex } from '@react-spectrum/layout';
-import { appConfig } from '@/config/appConfig';
-import { Configuration, RomanNumeralApi } from '@/clients/roman-numeral-client';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
+import { useRomanNumeralConverter } from '@/hooks/useRomanNumeralConverter';
 
 type IntegerToRomanNumeralComponentProps = Record<never, never>;
 
 const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentProps> = () => {
-  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
-  const [result, setResult] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>('');
 
-  // Create API client with useMemo to prevent recreation on every render
-  const api = useMemo(() => {
-    const apiConfig = new Configuration({
-      basePath: appConfig.getRomanNumeralClientConfig().baseUrl
-    });
-    return new RomanNumeralApi(apiConfig);
-  }, []);
+  const { convertToRomanNumeral, isLoading, error, result } = useRomanNumeralConverter();
 
-  // Handle conversion button press by ensuring value is entered, set is loading, and calling the api.
-  const handleConvertButtonPress = useCallback(async () => {
-    // Let's intentionally allow for invalid input (eg letters and invalid numbers), so we can ensure the validation logic is enforced by the service, rather than have duplicated logic.
-    setResult('');
-    setError('');
-    if(!inputValue){
-      setError('Please enter a value');
-      return;
-    }
-    setIsLoading(true);
+  // Handle form submission following React Spectrum best practices
+  // Based on react-spectrum forms.mdx: "Uncontrolled forms" and "Server validation" sections
+  const handleFormSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    try {
-      //allow for non-numeric values so we can test out our backend.
-      const response = await api.convertIntegerToRomanNumeral(inputValue as unknown as number);
-      setResult(response.output);
-    } catch (err) {
-      console.error('Conversion error:', err);
-      setError('Failed to convert number. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [inputValue, api]);
+    // Get form data using FormData API as recommended in documentation
+    const formData = new FormData(e.currentTarget);
+    const numberValue = formData.get('number') as string;
+    // Allow for any non-empty value so we can test out our backend validation
+    await convertToRomanNumeral(numberValue);
+  }, [convertToRomanNumeral]);
 
-  // Handle input change. Note: with number fields, change is only fired on blur, rather than when typing happens.
-  const handleInputChange = useCallback((value: string | undefined) => {
+  // Handle input change for controlled component
+  // Based on react-spectrum forms.mdx: "Controlled forms" section
+  const handleInputChange = useCallback((value: string) => {
     setInputValue(value);
-    setError('');
-    if (value == undefined) {
-      setError('Please enter a value');
-    }
   }, []);
 
   return (
@@ -70,70 +49,75 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
     >
       <Flex
         direction="column"
-        justifyContent="center"
-        height="100%"
         gap="size-400"
       >
-        {/* Title */}
+        {/* Title with proper heading structure */}
         <Heading level={1} marginBottom="size-300">
           Roman numeral converter
         </Heading>
 
-        {/* Input Section */}
-        <Flex
-          direction="column"
-          gap="size-200"
+        {/* Form with proper validation behavior */}
+        {/* Based on react-spectrum Form.mdx: "Validation behavior" section */}
+        <Form
+          onSubmit={handleFormSubmit}
+          maxWidth="size-3000"
+          aria-label="Roman numeral conversion form"
         >
-          <TextField
-            label={"Enter a number"}
-            onChange={handleInputChange}
-            value={inputValue}
-            width={"100%"}
-            isRequired={true}
-          />
-          {/* Alternatively, we can use a NumberField, however, it doesn't fire onChange until blur occurs, and also doesn't allow invalid values, like letters, etc. */}
-          {/*<NumberField*/}
-          {/*  label="Enter a number"*/}
-          {/*  value={inputValue}*/}
-          {/*  onChange={handleInputChange}*/}
-          {/*  minValue={1}*/}
-          {/*  maxValue={3999}*/}
-          {/*  step={1}*/}
-          {/*  hideStepper={true}*/}
-          {/*  width="100%"*/}
-          {/*  isRequired*/}
-          {/*/>*/}
-
-          <Button
-            variant="primary"
-            onPress={handleConvertButtonPress}
-            isDisabled={isLoading}
-            width="220px"
+          {/* Input Section */}
+          <Flex
+            direction="column"
+            gap="size-200"
+            marginBottom="size-300"
           >
-            {isLoading ? 'Converting...' : 'Convert to roman numeral'}
-          </Button>
-        </Flex>
+            {/* TextField with proper validation and accessibility */}
+            {/* Based on react-spectrum TextField.mdx: "Validation" and "Labeling" sections */}
+            <TextField
+              label="Enter a number"
+              name="number"
+              value={inputValue}
+              onChange={handleInputChange}
+              isRequired
+              necessityIndicator="label"
+              description="Enter a number between 1 and 3999 to convert to Roman numerals."
+              validationState={error ? 'invalid' : undefined}
+              errorMessage={error}
+              isDisabled={isLoading}
+              width="100%"
+            />
+
+            {/* Submit button */}
+            <Button
+              type="submit"
+              variant="primary"
+              isDisabled={isLoading}
+              width="220px"
+            >
+              {isLoading ? 'Converting...' : 'Convert to roman numeral'}
+            </Button>
+          </Flex>
+        </Form>
 
         {/* Result Section */}
         {result && (
           <View marginTop="size-300">
             <Text>
-              Roman numeral: {result}
+              <strong>Roman numeral:</strong> {result}
             </Text>
           </View>
         )}
 
-        {/* Error Section */}
+        {/* Form-level error alert - positioned at bottom */}
+        {/* Based on react-spectrum Form.mdx: "Focus management" section */}
         {error && (
-          <View marginTop="size-300">
-            <Text UNSAFE_style={{ color: 'var(--spectrum-semantic-negative-color-text)' }}>
-              {error}
-            </Text>
-          </View>
+          <InlineAlert variant="negative" marginTop="size-200">
+            <Content>
+              Please fix the errors below and try again.
+            </Content>
+          </InlineAlert>
         )}
       </Flex>
     </View>
   );
 };
 
-export default IntegerToRomanNumeralComponent; 
+export default IntegerToRomanNumeralComponent;
