@@ -1,0 +1,9 @@
+.openapi-generator-ignore
+apis/HealthApi.ts
+apis/RomanNumeralApi.ts
+apis/index.ts
+index.ts
+models/ConvertIntegerToRomanNumeralResponse.ts
+models/Health200Response.ts
+models/index.ts
+runtime.ts

@@ -1,0 +1,104 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "example": "2024-01-01T00:00:00.000Z"
+                    },
+                    "uptime": {
+                      "type": "number",
+                      "example": 123.456
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Health check endpoint",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/romannumeral": {
+      "get": {
+        "operationId": "convertIntegerToRomanNumeral",
+        "parameters": [
+          {
+            "name": "query",
+            "required": true,
+            "in": "query",
+            "description": "The integer to convert to a Roman Numeral.",
+            "schema": {
+              "minimum": 1,
+              "maximum": 3999,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversion result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConvertIntegerToRomanNumeralResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Convert a number to a roman numeral",
+        "tags": [
+          "RomanNumeral"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Roman Numeral API",
+    "description": "API for Roman numeral conversions",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "ConvertIntegerToRomanNumeralResponse": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "original input integer provided to convert "
+          },
+          "output": {
+            "type": "string",
+            "description": "result "
+          }
+        },
+        "required": [
+          "input",
+          "output"
+        ]
+      }
+    }
+  }
+}
