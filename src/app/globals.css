@@ -1,4 +1,4 @@
-@import "tailwindcss";
+/*@import "tailwindcss"; <- note: this interferes with react-spectrum library (eg headers are too small)*/
 
 :root {
   --background: #ffffff;
