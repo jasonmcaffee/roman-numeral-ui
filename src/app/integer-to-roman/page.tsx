@@ -1,11 +1,10 @@
 "use client";
 
-import { 
-  View, 
-  Heading, 
-  Text, 
-  NumberField, 
-  Button
+import {
+  View,
+  Heading,
+  Text,
+  Button, TextField
 } from '@adobe/react-spectrum';
 import ReactSpectrumProvider from '@/components/ReactSpectrumProvider';
 import { appConfig } from '@/config/appConfig';
@@ -21,32 +20,33 @@ export default function IntegerToRoman() {
 }
 
 function IntegerToRomanContent() {
-  const [inputValue, setInputValue] = useState<number | undefined>(undefined);
+  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
   const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
   // Create API client with useMemo to prevent recreation on every render
   const api = useMemo(() => {
-    const apiConfig = new Configuration({ 
-      basePath: appConfig.getRomanNumeralClientConfig().baseUrl 
+    const apiConfig = new Configuration({
+      basePath: appConfig.getRomanNumeralClientConfig().baseUrl
     });
     return new RomanNumeralApi(apiConfig);
   }, []);
 
-  // Handle conversion
-  const handleConvert = useCallback(async () => {
-    if (!inputValue || inputValue < 1 || inputValue > 3999) {
-      setError('Please enter a valid integer between 1 and 3999');
+  // Handle conversion button press by ensuring value is entered, set is loading, and calling the api.
+  const handleConvertButtonPress = useCallback(async () => {
+    // Let's intentionally allow for invalid input (eg letters and invalid numbers), so we can ensure the validation logic is enforced by the service, rather than have duplicated logic.
+    setResult('');
+    setError('');
+    if(!inputValue){
+      setError('Please enter a value');
       return;
     }
-
     setIsLoading(true);
-    setError('');
-    setResult('');
 
     try {
-      const response = await api.convertIntegerToRomanNumeral(inputValue);
+      //allow for non-numeric values so we can test out our backend.
+      const response = await api.convertIntegerToRomanNumeral(inputValue as unknown as number);
       setResult(response.output);
     } catch (err) {
       console.error('Conversion error:', err);
@@ -56,21 +56,19 @@ function IntegerToRomanContent() {
     }
   }, [inputValue, api]);
 
-  // Handle input change
-  const handleInputChange = useCallback((value: number | undefined) => {
+  // Handle input change. Note: with number fields, change is only fired on blur, rather than when typing happens.
+  const handleInputChange = useCallback((value: string | undefined) => {
     setInputValue(value);
     setError('');
-    if (value !== undefined && (value < 1 || value > 3999)) {
-      setError('Please enter a valid integer between 1 and 3999');
+    if (value == undefined) {
+      setError('Please enter a value');
     }
   }, []);
 
-  const isValid = inputValue !== undefined && inputValue >= 1 && inputValue <= 3999;
-
   return (
-    <View 
-      padding="size-1000" 
-      maxWidth="400px" 
+    <View
+      padding="size-1000"
+      maxWidth="700px"
       margin="0 auto"
       height="100vh"
       UNSAFE_style={{
@@ -79,42 +77,45 @@ function IntegerToRomanContent() {
         justifyContent: 'center'
       }}
     >
-      <View 
-        UNSAFE_style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--spectrum-global-dimension-size-400)'
-        }}
-      >
+      <View>
         {/* Title */}
-        <Heading level={1} marginBottom="size-300" UNSAFE_style={{ textAlign: 'center' }}>
+        <Heading level={1} marginBottom="size-300">
           Roman numeral converter
         </Heading>
 
         {/* Input Section */}
-        <View 
+        <View
           UNSAFE_style={{
             display: 'flex',
             flexDirection: 'column',
             gap: 'var(--spectrum-global-dimension-size-200)'
           }}
         >
-          <NumberField
-            label="Enter a number"
-            value={inputValue}
+          <TextField
+            label={"Enter a number"}
             onChange={handleInputChange}
-            minValue={1}
-            maxValue={3999}
-            step={1}
-            width="100%"
-            isRequired
+            value={inputValue}
+            width={"100%"}
+            isRequired={true}
           />
-          
+          {/* Alternatively, we can use a NumberField, however, it doesn't fire onChange until blur occurs, and also doesn't allow invalid values, like letters, etc. */}
+          {/*<NumberField*/}
+          {/*  label="Enter a number"*/}
+          {/*  value={inputValue}*/}
+          {/*  onChange={handleInputChange}*/}
+          {/*  minValue={1}*/}
+          {/*  maxValue={3999}*/}
+          {/*  step={1}*/}
+          {/*  hideStepper={true}*/}
+          {/*  width="100%"*/}
+          {/*  isRequired*/}
+          {/*/>*/}
+
           <Button
             variant="primary"
-            onPress={handleConvert}
-            isDisabled={!isValid || isLoading}
-            width="100%"
+            onPress={handleConvertButtonPress}
+            isDisabled={isLoading}
+            width="220px"
           >
             {isLoading ? 'Converting...' : 'Convert to roman numeral'}
           </Button>
@@ -130,7 +131,7 @@ function IntegerToRomanContent() {
         )}
 
         {/* Error Section */}
-        {error && !result && (
+        {error && (
           <View marginTop="size-300">
             <Text UNSAFE_style={{ color: 'var(--spectrum-semantic-negative-color-text)' }}>
               {error}
@@ -140,4 +141,4 @@ function IntegerToRomanContent() {
       </View>
     </View>
   );
-} 
+}
