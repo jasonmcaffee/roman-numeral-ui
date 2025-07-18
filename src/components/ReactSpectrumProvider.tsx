@@ -3,8 +3,6 @@
 import { Provider, defaultTheme } from '@adobe/react-spectrum';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
-import ClientOnly from './ClientOnly';
-import LoadingFallback from './LoadingFallback';
 
 /**
  * ReactSpectrumProvider Component
@@ -17,7 +15,6 @@ import LoadingFallback from './LoadingFallback';
  * - Provides React Spectrum theme (automatically detects system theme)
  * - Configures locale settings (English)
  * - Integrates with Next.js router for navigation
- * - Ensures client-side only rendering to prevent SSR errors with the spectrum library (e.g. i18n was having issues)
  * - Shows loading state while components initialize
  * - Automatically switches theme based on system settings
  *
@@ -35,10 +32,8 @@ export default function ReactSpectrumProvider({ children }: ReactSpectrumProvide
   const router = useRouter();
 
   return (
-    <ClientOnly fallback={<LoadingFallback />}>
       <Provider theme={defaultTheme} locale="en" router={{navigate: router.push}}>
         {children}
       </Provider>
-    </ClientOnly>
   );
 }
