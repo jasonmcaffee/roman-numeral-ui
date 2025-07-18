@@ -1,10 +1,10 @@
 "use client";
 
-import { 
-  View, 
-  Heading, 
-  Text, 
-  Button, 
+import {
+  View,
+  Heading,
+  Text,
+  Button,
   TextField
 } from '@adobe/react-spectrum';
 import { Flex } from '@react-spectrum/layout';
@@ -16,12 +16,12 @@ import { useState, useCallback, useMemo } from 'react';
 export default function IntegerToRoman() {
   return (
     <ReactSpectrumProvider>
-      <IntegerToRomanContent />
+      <IntegerToRomanNumeralComponent />
     </ReactSpectrumProvider>
   );
 }
 
-function IntegerToRomanContent() {
+function IntegerToRomanNumeralComponent() {
   const [inputValue, setInputValue] = useState<string | undefined>(undefined);
   const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -29,8 +29,8 @@ function IntegerToRomanContent() {
 
   // Create API client with useMemo to prevent recreation on every render
   const api = useMemo(() => {
-    const apiConfig = new Configuration({ 
-      basePath: appConfig.getRomanNumeralClientConfig().baseUrl 
+    const apiConfig = new Configuration({
+      basePath: appConfig.getRomanNumeralClientConfig().baseUrl
     });
     return new RomanNumeralApi(apiConfig);
   }, []);
@@ -68,26 +68,26 @@ function IntegerToRomanContent() {
   }, []);
 
   return (
-    <View 
-      padding="size-1000" 
+    <View
+      padding="size-1000"
       maxWidth="700px"
       margin="0 auto"
       height="100vh"
     >
-      <Flex 
-        direction="column" 
-        justifyContent="center" 
+      <Flex
+        direction="column"
+        justifyContent="center"
         height="100%"
         gap="size-400"
       >
         {/* Title */}
-        <Heading level={1} marginBottom="size-300" UNSAFE_style={{ textAlign: 'center' }}>
+        <Heading level={1} marginBottom="size-300">
           Roman numeral converter
         </Heading>
 
         {/* Input Section */}
-        <Flex 
-          direction="column" 
+        <Flex
+          direction="column"
           gap="size-200"
         >
           <TextField

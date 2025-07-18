@@ -11,9 +11,9 @@ export default function Home() {
           <Heading level={1}>Roman Numeral Converter</Heading>
           <Text>Convert between integers and Roman numerals</Text>
         </View>
-        
+
         <View>
-          <Link href="/integer-to-roman">
+          <Link href="/integer-to-roman-numeral">
             <Text>Convert Integer to Roman Numeral</Text>
           </Link>
         </View>
