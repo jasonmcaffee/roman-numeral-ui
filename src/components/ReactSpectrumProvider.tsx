@@ -6,6 +6,26 @@ import { ReactNode } from 'react';
 import ClientOnly from './ClientOnly';
 import LoadingFallback from './LoadingFallback';
 
+/**
+ * ReactSpectrumProvider Component
+ *
+ * This component provides the React Spectrum context to the application,
+ * including theme, locale, and router configuration. It wraps the React Spectrum
+ * Provider with client-side rendering protection to prevent SSR issues.
+ *
+ * Key Features:
+ * - Provides React Spectrum theme (defaultTheme)
+ * - Configures locale settings (English)
+ * - Integrates with Next.js router for navigation
+ * - Ensures client-side only rendering to prevent SSR errors with the spectrum library (e.g. i18n was having issues)
+ * - Shows loading state while components initialize
+ *
+ * This component should wrap any part of the application that uses
+ * React Spectrum components. It handles the complex setup required
+ * to make React Spectrum work properly with Next.js App Router.
+ *
+ * @param children - The application components that need React Spectrum context
+ */
 interface ReactSpectrumProviderProps {
   children: ReactNode;
 }
@@ -20,4 +40,4 @@ export default function ReactSpectrumProvider({ children }: ReactSpectrumProvide
       </Provider>
     </ClientOnly>
   );
-} 
+}
