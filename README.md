@@ -25,14 +25,21 @@ This project uses a openapi generated client based on the roman-numeral-openapi-
 https://github.com/jasonmcaffee/roman-numeral-service
 
 ### Datadog
-#### APM
+#### Dashboards
 ##### Services Explorer
 We can see our roman numeral ui's requests, errors, latency, etc
-
+![img_2.png](img_2.png)
 ##### Runtime Metrics
+We can see the cpu utilization, ram usage, etc for our app
+![img_3.png](img_3.png)
 
 ##### Traces Explorer
 
+![img_4.png](img_4.png)
+
+##### Logs Explorer
+We can see logs from our pages and routes
+![img_1.png](img_1.png)
 
 ### React Spectrum
 [React Spectrum](https://react-spectrum.adobe.com/)
