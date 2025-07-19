@@ -24,6 +24,16 @@ This project uses a openapi generated client based on the roman-numeral-openapi-
 
 https://github.com/jasonmcaffee/roman-numeral-service
 
+### Datadog
+#### APM
+##### Services Explorer
+We can see our roman numeral ui's requests, errors, latency, etc
+
+##### Runtime Metrics
+
+##### Traces Explorer
+
+
 ### React Spectrum
 [React Spectrum](https://react-spectrum.adobe.com/)
 #### 1. React Stately (@react-stately/*) - State Management Layer
@@ -53,6 +63,8 @@ Responsibilities:
 - Uses props from behavior hook and state from state hook
 - Implements Adobe's Spectrum design system
 - Can be customized with themes
+
+
 
 ## Setup
 
