@@ -34,6 +34,9 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Create log directory for Datadog
+RUN mkdir -p /var/log/roman-numeral-ui && chown nextjs:nodejs /var/log/roman-numeral-ui
+
 # Copy the public folder
 COPY --from=builder /app/public ./public
 

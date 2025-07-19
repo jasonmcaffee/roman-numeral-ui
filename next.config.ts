@@ -3,11 +3,26 @@ import { glob } from "glob";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  serverRuntimeConfig: {
+    // Will only be available on the server side
+    ddAgentHost: process.env.DD_AGENT_HOST,
+  },
+  publicRuntimeConfig: {
+    // Will be available on both server and client
+    ddApiKey: process.env.DD_API_KEY,
+  },
   webpack(config, { isServer }) {
     if (!isServer) {
       // Don't include any locale strings in the client JS bundle.
       // Note: We'll add the locales plugin later if needed
     }
+    
+    // Add Datadog tracer to webpack externals for server-side
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push('dd-trace');
+    }
+    
     return config;
   },
   transpilePackages: [

@@ -1,0 +1,33 @@
+# DataDog Agent Configuration
+api_key: ${DD_API_KEY}
+
+# Site configuration
+site: us5.datadoghq.com
+
+# Logs configuration
+logs_config:
+  container_collect_all: true
+  processing_rules:
+    - type: exclude_at_match
+      name: exclude_datadog_agent_logs
+      pattern: "container_name:datadog-agent"
+
+# APM configuration
+apm_config:
+  enabled: true
+  apm_non_local_traffic: true
+
+# DogStatsD configuration
+use_dogstatsd: true
+dogstatsd_non_local_traffic: true
+
+# Container monitoring
+collect_kubernetes_events: false
+
+# Process monitoring
+process_config:
+  enabled: true
+
+# Network monitoring
+network_config:
+  enabled: true 

@@ -1,0 +1,9 @@
+logs:
+  - type: file
+    path: /var/log/roman-numeral-ui/roman-numeral-ui.log
+    service: roman-numeral-ui
+    source: nodejs
+    log_processing_rules:
+      - type: multi_line
+        name: new_log_start_with_date
+        pattern: \d{4}-\d{2}-\d{2} 

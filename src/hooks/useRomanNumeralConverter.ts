@@ -24,10 +24,19 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
   }, []);
 
   const convertToRomanNumeral = useCallback(async (input: string): Promise<string> => {
+    const startTime = Date.now();
+    
     // Clear previous results and errors
     setResult(null);
     setError(null);
     setIsLoading(true);
+
+    // Log conversion attempt
+    console.log('Roman numeral conversion requested', {
+      input,
+      timestamp: new Date().toISOString(),
+      service: 'roman-numeral-ui',
+    });
 
     try {
       // we intentionally allow for any values, including text and invalid numbers, so we can ensure the validation logic
@@ -35,12 +44,30 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
       if (!input.trim()) {
         const errorMessage = 'Please enter a value.';
         setError(errorMessage);
+        
+        // Log validation error
+        console.error('Roman numeral conversion validation error', {
+          input,
+          error: errorMessage,
+          timestamp: new Date().toISOString(),
+        });
+        
         throw new Error(errorMessage);
       }
 
       const response = await api.convertIntegerToRomanNumeral(input as unknown as number);
       const romanNumeral = response.output;
       setResult(romanNumeral);
+      
+      // Log successful conversion
+      const responseTime = Date.now() - startTime;
+      console.log('Roman numeral conversion successful', {
+        input,
+        output: romanNumeral,
+        responseTime,
+        timestamp: new Date().toISOString(),
+      });
+      
       return romanNumeral;
     } catch (err) {
       // if we have a bad request, we know that the response should be an InputValidationError
@@ -50,12 +77,35 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
           // we only expect one here, but handle the use case where there could be multiple by joining them all together.
           const validationErrorMessage = inputValidationError.errorDetails.map(d => d.message).join(' ');
           setError(validationErrorMessage);
+          
+          // Log validation error from API
+          console.error('Roman numeral conversion API validation error', {
+            input,
+            error: validationErrorMessage,
+            status: err.response.status,
+            timestamp: new Date().toISOString(),
+          });
         } catch { // if we don't get the data back in the expected format, just display a generic error.
-          setError('Unknown validation issue.  Please check your input.');
+          const genericError = 'Unknown validation issue.  Please check your input.';
+          setError(genericError);
+          
+          console.error('Roman numeral conversion API error parsing failed', {
+            input,
+            error: genericError,
+            status: err.response.status,
+            timestamp: new Date().toISOString(),
+          });
         }
       }else{
         const errorMessage = err instanceof Error ? err.message : 'Failed to convert number. Please try again.';
         setError(errorMessage);
+        
+        // Log general error
+        console.error('Roman numeral conversion failed', {
+          input,
+          error: errorMessage,
+          timestamp: new Date().toISOString(),
+        });
       }
       throw new Error('error making api call');
     } finally {

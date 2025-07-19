@@ -18,11 +18,14 @@
     "@react-aria/i18n": "^3.12.10",
     "@react-aria/numberfield": "^3.11.16",
     "@react-stately/numberfield": "^3.9.13",
+    "dd-trace": "^5.59.0",
     "glob": "^11.0.3",
+    "hot-shots": "^11.1.0",
     "next": "15.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
