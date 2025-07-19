@@ -18,7 +18,10 @@ jest.mock('@/config/appConfig', () => ({
   }
 }));
 
-describe('useRomanNumeralConverter', () => {
+/**
+ * Test state management and api response handling (network errors, bad request, etc)
+ */
+describe('useRomanNumeralConverter hook', () => {
   let mockApiInstance: any;
   let mockRomanNumeralApi: any;
   let mockConfiguration: any;
