@@ -30,9 +30,8 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
     setIsLoading(true);
 
     try {
-      // We intentionally allow for any values, including text and invalid numbers,
-      // so we can ensure the validation logic is enforced by the service,
-      // rather than have duplicated logic on the client side.
+      // we intentionally allow for any values, including text and invalid numbers, so we can ensure the validation logic
+      // is enforced by the service, rather than have duplicated logic on the client side.
       if (!input.trim()) {
         const errorMessage = 'Please enter a value.';
         setError(errorMessage);
@@ -44,15 +43,14 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
       setResult(romanNumeral);
       return romanNumeral;
     } catch (err) {
-      //if we have a bad request, we know that the response should be an InputValidationError
+      // if we have a bad request, we know that the response should be an InputValidationError
       if (err instanceof runtime.ResponseError && err.response.status == 400) {
         try{
-          setError('error with 400');
           const inputValidationError = (await err.response.json()) as InputValidationError;
-          //we only expect one here, but handle the use case where there could be multiple by joining them all together.
+          // we only expect one here, but handle the use case where there could be multiple by joining them all together.
           const validationErrorMessage = inputValidationError.errorDetails.map(d => d.message).join(' ');
           setError(validationErrorMessage);
-        } catch { //if we don't get the data back in the expected format, just display a generic error.
+        } catch { // if we don't get the data back in the expected format, just display a generic error.
           setError('Unknown validation issue.  Please check your input.');
         }
       }else{
