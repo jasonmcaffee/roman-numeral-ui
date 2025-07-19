@@ -17,12 +17,6 @@ const nextConfig: NextConfig = {
       // Note: We'll add the locales plugin later if needed
     }
     
-    // Add Datadog tracer to webpack externals for server-side
-    if (isServer) {
-      config.externals = config.externals || [];
-      config.externals.push('dd-trace');
-    }
-    
     return config;
   },
   transpilePackages: [

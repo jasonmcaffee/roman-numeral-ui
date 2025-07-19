@@ -67,9 +67,16 @@ docker build -t roman-numeral-ui:latest .
 
 #### Running the Container
 
-### Basic Run
+##### Basic Run
 ```bash
 docker run -p 3000:3000 --env-file .env roman-numeral-ui:latest
+```
+
+##### Docker Compose
+The make file has convenience commands for running docker compose with datadog agent.
+
+```shell
+DD_API_KEY=123 make build-and-run
 ```
 
 ### Dev Setup for Local Development
