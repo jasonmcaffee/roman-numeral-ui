@@ -165,6 +165,7 @@ Setup for our test environment, including module resolution, test matching patte
 ```bash
 npm test
 ```
+![img.png](img.png)
 
 
 

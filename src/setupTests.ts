@@ -44,7 +44,9 @@ beforeAll(() => {
       (args[0].includes('Warning: ReactDOM.render is no longer supported') ||
        args[0].includes('Warning: ReactDOM.render has not been supported') ||
        args[0].includes('React does not recognize the') ||
-       args[0].includes('Please enter a value.'))
+       args[0].includes('Please enter a value.') ||
+       args[0].includes('You called act(async () => ...) without await') ||
+       args[0].includes('An update to TestComponent inside a test was not wrapped in act'))
     ) {
       return;
     }

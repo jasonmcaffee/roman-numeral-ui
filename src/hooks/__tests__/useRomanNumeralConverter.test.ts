@@ -27,21 +27,21 @@ describe('useRomanNumeralConverter', () => {
   beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
-    
+
     // Create mock API instance
     mockApiInstance = {
       convertIntegerToRomanNumeral: jest.fn()
     };
-    
+
     // Get the mocked classes
-    const { RomanNumeralApi, Configuration, ResponseError } = require('@/clients/roman-numeral-client');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { RomanNumeralApi, Configuration } = require('@/clients/roman-numeral-client');
     mockRomanNumeralApi = RomanNumeralApi;
     mockConfiguration = Configuration;
-    mockResponseError = ResponseError;
-    
+
     // Setup Configuration mock
     mockConfiguration.mockImplementation(() => ({} as any));
-    
+
     // Setup RomanNumeralApi mock
     mockRomanNumeralApi.mockImplementation(() => mockApiInstance);
   });
@@ -134,20 +134,34 @@ describe('useRomanNumeralConverter', () => {
     });
 
     it('should handle API validation errors (400 status)', async () => {
-      const mockValidationError = {
-        response: {
-          status: 400,
-          json: jest.fn().mockResolvedValue({
-            errorDetails: [
-              { message: 'Number must be between 1 and 3999' }
-            ]
-          })
-        }
-      };
+      // Create a proper mock Response object
+      const mockResponse = {
+        status: 400,
+        json: jest.fn().mockResolvedValue({
+          errorDetails: [
+            { message: 'Number must be between 1 and 3999' }
+          ]
+        }),
+        headers: new Headers(),
+        ok: false,
+        redirected: false,
+        statusText: 'Bad Request',
+        type: 'default' as ResponseType,
+        url: 'http://localhost:8080/convert',
+        clone: jest.fn(),
+        arrayBuffer: jest.fn(),
+        blob: jest.fn(),
+        formData: jest.fn(),
+        text: jest.fn(),
+        body: null,
+        bodyUsed: false
+      } as unknown as Response;
 
-      mockApiInstance.convertIntegerToRomanNumeral.mockRejectedValue(
-        new mockResponseError(mockValidationError)
-      );
+      // Use the actual ResponseError from the runtime module
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { ResponseError } = require('@/clients/roman-numeral-client/runtime');
+      const responseError = new ResponseError(mockResponse);
+      mockApiInstance.convertIntegerToRomanNumeral.mockRejectedValue(responseError);
 
       const { result } = renderHook(() => useRomanNumeralConverter());
 
@@ -155,10 +169,11 @@ describe('useRomanNumeralConverter', () => {
         try {
           await result.current.convertToRomanNumeral('5000');
         } catch (error) {
-          // Expected to throw
+          // Expected to throw - the hook always throws at the end
         }
       });
 
+      // The hook should extract the validation error message from the response
       expect(result.current.error).toBe('Number must be between 1 and 3999');
       expect(result.current.result).toBeNull();
       expect(result.current.isLoading).toBe(false);
@@ -176,10 +191,11 @@ describe('useRomanNumeralConverter', () => {
         try {
           await result.current.convertToRomanNumeral('42');
         } catch (error) {
-          // Expected to throw
+          // Expected to throw - the hook always throws at the end
         }
       });
 
+      // The hook should use the error message from the Error object
       expect(result.current.error).toBe('Network error');
       expect(result.current.result).toBeNull();
       expect(result.current.isLoading).toBe(false);
@@ -217,8 +233,11 @@ describe('useRomanNumeralConverter', () => {
       const { result } = renderHook(() => useRomanNumeralConverter());
 
       // Start the conversion
-      const conversionPromise = act(async () => {
-        return result.current.convertToRomanNumeral('42');
+      const conversionPromise = result.current.convertToRomanNumeral('42');
+
+      // Wait for the next tick to allow React to update state
+      await act(async () => {
+        await new Promise(resolve => setTimeout(resolve, 0));
       });
 
       // Check that loading is true
@@ -228,9 +247,17 @@ describe('useRomanNumeralConverter', () => {
 
       // Resolve the promise
       resolvePromise!({ output: 'XLII' });
-      await conversionPromise;
 
-      // Check that loading is false
+      // Now await the conversion
+      await act(async () => {
+        try {
+          await conversionPromise;
+        } catch (error) {
+          // Expected to throw
+        }
+      });
+
+      // Check that loading is false after completion
       expect(result.current.isLoading).toBe(false);
     });
 
@@ -239,6 +266,9 @@ describe('useRomanNumeralConverter', () => {
       mockApiInstance.convertIntegerToRomanNumeral.mockResolvedValue(mockResponse);
 
       const { result } = renderHook(() => useRomanNumeralConverter());
+
+      // Ensure the hook is properly initialized
+      expect(result.current.convertToRomanNumeral).toBeDefined();
 
       // First conversion
       await act(async () => {
@@ -263,7 +293,13 @@ describe('useRomanNumeralConverter', () => {
 
   describe('API client memoization', () => {
     it('should not recreate API client on every render', () => {
-      const { rerender } = renderHook(() => useRomanNumeralConverter());
+      // Clear mocks to start fresh
+      jest.clearAllMocks();
+
+      const { result, rerender } = renderHook(() => useRomanNumeralConverter());
+
+      // Ensure the hook is initialized
+      expect(result.current.convertToRomanNumeral).toBeDefined();
 
       // Force re-render
       rerender();
@@ -273,4 +309,4 @@ describe('useRomanNumeralConverter', () => {
       expect(mockRomanNumeralApi).toHaveBeenCalledTimes(1);
     });
   });
-}); 
+});
