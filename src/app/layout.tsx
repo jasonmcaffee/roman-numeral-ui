@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Roman Numeral Converter",
-  description: "Convert between integers and Roman numerals",
+  title: "Roman Numeral UI",
+  description: "UI for Roman numeral operations, such as converting integers to Roman numerals.",
 };
 
 export default function RootLayout({

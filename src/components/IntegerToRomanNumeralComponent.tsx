@@ -24,15 +24,17 @@ type IntegerToRomanNumeralComponentProps = Record<never, never>;
  * React spectrum documentation that was referenced:
  * Form - https://github.com/adobe/react-spectrum/blob/dd1603a07247317310207b8ff5c3c1302a8b7f10/packages/@react-spectrum/form/docs/Form.mdx#L1-L1
  * TextField - https://github.com/adobe/react-spectrum/blob/dd1603a07247317310207b8ff5c3c1302a8b7f10/packages/@react-spectrum/textfield/docs/TextField.mdx#L1-L1
- * - Note: NumberField was intentionally not used so that we could allow for invalid input and show error messaging, purely for demonstration purposes.
+ * - Note: NumberField was intentionally not used so that we could allow for invalid input and showing error messages, purely for demonstration purposes.
  * View - https://github.com/adobe/react-spectrum/blob/dd1603a07247317310207b8ff5c3c1302a8b7f10/packages/@react-spectrum/view/docs/View.mdx#L2-L2
  * Flex - https://github.com/adobe/react-spectrum/blob/dd1603a07247317310207b8ff5c3c1302a8b7f10/packages/@react-spectrum/layout/docs/Flex.mdx#L1-L1
  * etc
  * @constructor
  */
 const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentProps> = () => {
+  //text input that is used to
   const [inputValue, setInputValue] = useState<string>('');
 
+  //consolidate our api calls, error handling, loading state, etc in a hook.
   const { convertToRomanNumeral, isLoading, error, result } = useRomanNumeralConverter();
 
   // Handle form submission following React Spectrum best practices
@@ -121,7 +123,7 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
         )}
 
         {/* Form-level error alert - positioned at bottom */}
-        {/* Based on react-spectrum Form.mdx: "Focus management" section */}
+        {/* Based on example in react-spectrum Form.mdx: "Focus management" section */}
         {error && (
           <InlineAlert variant="negative">
             Please fix the errors and try again.
