@@ -104,9 +104,91 @@ Our components use hooks, which help us separate our business logic, api calls, 
 ### Clients
 Where we store clients, including the openapi generated client for our Roman Numeral Service.
 
-## Technologies Used
+# Testing Implementation for Roman Numeral UI
+Our testing strategy follows patterns found in the react-spectrum library.
 
-- [Next.js](https://nextjs.org/) - React framework
- - Adobe's design system
+## Testing Stack
+
+- **Jest** - Test runner and assertion library
+- **@testing-library/react** - React component testing utilities
+- **@testing-library/user-event** - User interaction simulation
+- **@testing-library/jest-dom** - Custom Jest matchers for DOM assertions
+- **jsdom** - DOM environment for testing
+- **ts-jest** - TypeScript support for Jest
+
+## Test Structure
+Tests are stored in __tests__ subfolders
+
+__test__/test-utils.tsx -  
+components/__tests__ - tests related to rendering, as well as integration with our hooks
+hooks/__tests__ - tests related to our hooks
+__mocks__ - mocks for static assets and svg imports
+
+## Test Categories
+
+### 1. Hook Tests
+**Test Categories**:
+- **Initial State**: Hook initialization and API client setup
+- **Success Cases**: Successful API calls and response handling
+- **Input Validation**: Empty and whitespace-only input handling
+- **Error Handling**: Network errors and unknown error scenarios
+- **State Management**: Loading states and result clearing
+- **API Client Memoization**: Ensuring API client is not recreated on re-renders
+
+
+### 2. Component Tests
+
+**Test Categories**:
+- **Component Rendering**: Initial render and element presence
+- **User Interactions**: Input handling and form submissions
+- **Loading States**: UI feedback during API calls
+- **Success States**: Result display after successful conversions
+- **Error Handling**: Validation errors and error message display
+- **Form Validation**: Empty form submission handling
+- **Integration with Hook**: Hook integration and state reflection
+
+
+## Testing Patterns
+
+### Test Organization
+
+**AAA Pattern (Arrange, Act, Assert)**:
+We divide our tests into 3 distinct sections, which help us understand the purpose of each part.
+- Arrange - set up everything needed for the test, such as configuring the environment and initialization.
+- Act - execute the code we want to test.
+- Assert - verify the outcomes.
+
+### User-Centric Testing
+We use @testing-library/user-event to provide realist user interactions with clicks, typing, enter key press, etc.
+
+## Configuration
+
+### Jest Configuration (`jest.config.js`)
+Setup for our test environment, including module resolution, test matching patterns, etc.
+
+### Test Setup (`src/setupTests.ts`)
+
+- Jest DOM extensions
+- IntersectionObserver and ResizeObserver mocks
+- Console error/warning suppression for expected messages
+- Global test cleanup
+
+## Running Tests
+
+### All Tests
+```bash
+npm test
+```
+
+## Best Practices Implemented
+
+1. **Test Behavior, Not Implementation**: Tests focus on user interactions and outcomes
+2. **Semantic Queries**: Use `getByTestId`, `getByText` over implementation details
+3. **Realistic User Interactions**: Use `userEvent` for realistic user behavior
+4. **Comprehensive Error Testing**: Test various error scenarios and edge cases
+5. **State Management Testing**: Verify loading states and state transitions
+6. **Accessibility Testing**: Ensure components work with screen readers
+7. **Mock Isolation**: Properly isolate components and hooks for testing
+
 
 
