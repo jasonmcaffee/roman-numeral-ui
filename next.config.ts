@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import { glob } from "glob";
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   webpack(config, { isServer }) {
     if (!isServer) {
       // Don't include any locale strings in the client JS bundle.
