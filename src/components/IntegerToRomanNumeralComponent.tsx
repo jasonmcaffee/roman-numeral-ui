@@ -16,6 +16,20 @@ import { useRomanNumeralConverter } from '@/hooks/useRomanNumeralConverter';
 
 type IntegerToRomanNumeralComponentProps = Record<never, never>;
 
+/**
+ * Component which provides functionality for converting integers to Roman numerals, using the roman-numeral-client.
+ * Logic for calling the api, error formatting, etc is contained in the useRomanNumeralHook, for better separation of concerns
+ * and readability.
+ *
+ * React spectrum documentation that was referenced:
+ * Form - https://github.com/adobe/react-spectrum/blob/dd1603a07247317310207b8ff5c3c1302a8b7f10/packages/@react-spectrum/form/docs/Form.mdx#L1-L1
+ * TextField - https://github.com/adobe/react-spectrum/blob/dd1603a07247317310207b8ff5c3c1302a8b7f10/packages/@react-spectrum/textfield/docs/TextField.mdx#L1-L1
+ * - Note: NumberField was intentionally not used so that we could allow for invalid input and show error messaging, purely for demonstration purposes.
+ * View - https://github.com/adobe/react-spectrum/blob/dd1603a07247317310207b8ff5c3c1302a8b7f10/packages/@react-spectrum/view/docs/View.mdx#L2-L2
+ * Flex - https://github.com/adobe/react-spectrum/blob/dd1603a07247317310207b8ff5c3c1302a8b7f10/packages/@react-spectrum/layout/docs/Flex.mdx#L1-L1
+ * etc
+ * @constructor
+ */
 const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentProps> = () => {
   const [inputValue, setInputValue] = useState<string>('');
 
@@ -69,8 +83,10 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
           >
             {/* TextField with proper validation and accessibility */}
             {/* Based on react-spectrum TextField.mdx: "Validation" and "Labeling" sections */}
+            {/* Note: NumberField was intentionally not used so that we could allow for invalid input and show error messaging.  */}
             <TextField
               label="Enter a number"
+              aria-label={"Enter a number"}
               name="number"
               value={inputValue}
               onChange={handleInputChange}
@@ -86,6 +102,7 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
             <Button
               type="submit"
               variant="primary"
+              aria-label={"Submit button"}
               isDisabled={isLoading}
               width="220px"
             >
@@ -106,8 +123,8 @@ const IntegerToRomanNumeralComponent: React.FC<IntegerToRomanNumeralComponentPro
         {/* Form-level error alert - positioned at bottom */}
         {/* Based on react-spectrum Form.mdx: "Focus management" section */}
         {error && (
-          <InlineAlert variant="negative" >
-            Please fix the errors below and try again.
+          <InlineAlert variant="negative">
+            Please fix the errors and try again.
           </InlineAlert>
         )}
       </Flex>
