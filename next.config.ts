@@ -13,8 +13,36 @@ const nextConfig: NextConfig = {
   },
   webpack(config, { isServer }) {
     if (!isServer) {
-      // Don't include any locale strings in the client JS bundle.
-      // Note: We'll add the locales plugin later if needed
+      // Exclude server-only packages from client bundles
+      config.externals = config.externals || [];
+      config.externals.push({
+        'dd-trace': 'dd-trace',
+        'hot-shots': 'hot-shots',
+        'graphql': 'graphql',
+        'graphql/language/visitor': 'graphql/language/visitor',
+        'graphql/language/printer': 'graphql/language/printer',
+        'graphql/utilities': 'graphql/utilities',
+        'lodash.sortby': 'lodash.sortby',
+      });
+      
+      // Handle node: scheme modules
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        dns: false,
+        path: false,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        os: false,
+        util: false,
+      };
     }
     
     return config;

@@ -1,39 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import tracer from 'dd-trace';
-import { StatsD } from 'hot-shots';
-
-// Initialize StatsD for metrics
-const statsd = new StatsD({
-  host: process.env.DD_AGENT_HOST || 'localhost',
-  port: 8125,
-  prefix: 'roman_numeral_ui.',
-  globalTags: {
-    service: 'roman-numeral-ui',
-    env: process.env.NODE_ENV || 'development',
-  },
-  errorHandler: (error) => {
-    console.error('StatsD error:', error);
-  },
-});
-
-// Initialize tracer
-console.log('Initializing Datadog tracer...');
-tracer.init({
-  service: 'roman-numeral-ui',
-  env: process.env.NODE_ENV || 'development',
-  version: process.env.npm_package_version || '1.0.0',
-  logInjection: true,
-  runtimeMetrics: true,
-  profiling: true,
-});
-console.log('Datadog tracer initialized');
+import { tracer, statsd } from '../../../../instrumentation';
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
   
   // Create a span for this request
   const span = tracer.startSpan('health.check');
-  console.log('Created span:', span);
   
   try {
     // Increment request counter
@@ -103,7 +75,6 @@ export async function GET(request: NextRequest) {
     );
   } finally {
     // Finish the span
-    console.log('Finishing span');
     span.finish();
   }
 } 
