@@ -16,10 +16,13 @@
 import * as runtime from '../runtime';
 import type {
   ConvertIntegerToRomanNumeralResponse,
+  InputValidationError,
 } from '../models/index';
 import {
     ConvertIntegerToRomanNumeralResponseFromJSON,
     ConvertIntegerToRomanNumeralResponseToJSON,
+    InputValidationErrorFromJSON,
+    InputValidationErrorToJSON,
 } from '../models/index';
 
 export interface ConvertIntegerToRomanNumeralRequest {

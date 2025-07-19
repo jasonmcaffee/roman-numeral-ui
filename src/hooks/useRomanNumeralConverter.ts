@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Configuration, RomanNumeralApi } from '@/clients/roman-numeral-client';
+import {Configuration, InputValidationError, RomanNumeralApi,} from '@/clients/roman-numeral-client';
+import * as runtime from '@/clients/roman-numeral-client/runtime';
 import { appConfig } from '@/config/appConfig';
 
 interface UseRomanNumeralConverterResult {
@@ -43,10 +44,22 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
       setResult(romanNumeral);
       return romanNumeral;
     } catch (err) {
-      console.error('Conversion error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Failed to convert number. Please try again.';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+      //if we have a bad request, we know that the response should be an InputValidationError
+      if (err instanceof runtime.ResponseError && err.response.status == 400) {
+        try{
+          setError('error with 400');
+          const inputValidationError = (await err.response.json()) as InputValidationError;
+          //we only expect one here, but handle the use case where there could be multiple by joining them all together.
+          const validationErrorMessage = inputValidationError.errorDetails.map(d => d.message).join(' ');
+          setError(validationErrorMessage);
+        } catch { //if we don't get the data back in the expected format, just display a generic error.
+          setError('Unknown validation issue.  Please check your input.');
+        }
+      }else{
+        const errorMessage = err instanceof Error ? err.message : 'Failed to convert number. Please try again.';
+        setError(errorMessage);
+      }
+      throw new Error('error making api call');
     } finally {
       setIsLoading(false);
     }
