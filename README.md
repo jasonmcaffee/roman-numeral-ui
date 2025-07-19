@@ -54,7 +54,25 @@ Responsibilities:
 - Implements Adobe's Spectrum design system
 - Can be customized with themes
 
-## Getting Started
+## Setup
+
+### Docker
+#### Building the Docker Image
+
+From the `roman-numeral-ui` directory, run:
+
+```bash
+docker build -t roman-numeral-ui:latest .
+```
+
+#### Running the Container
+
+### Basic Run
+```bash
+docker run -p 3000:3000 --env-file .env roman-numeral-ui:latest
+```
+
+### Dev Setup for Local Development
 
 First, install the dependencies:
 
