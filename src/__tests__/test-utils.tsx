@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { Provider } from '@adobe/react-spectrum';
+import { Provider, defaultTheme } from '@adobe/react-spectrum';
 
 // Test wrapper component with React Spectrum provider
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Provider>
+  <Provider theme={defaultTheme}>
     {children}
   </Provider>
 );

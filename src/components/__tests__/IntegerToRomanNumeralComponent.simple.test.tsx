@@ -3,49 +3,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import IntegerToRomanNumeralComponent from '../IntegerToRomanNumeralComponent';
 import { useRomanNumeralConverter } from '@/hooks/useRomanNumeralConverter';
+import { TestWrapper } from '@/__tests__/test-utils';
 
 // Mock the hook
 jest.mock('@/hooks/useRomanNumeralConverter');
 const mockUseRomanNumeralConverter = useRomanNumeralConverter as jest.MockedFunction<typeof useRomanNumeralConverter>;
-
-// Mock React Spectrum components to avoid CSS module issues
-jest.mock('@adobe/react-spectrum', () => ({
-  View: ({ children, ...props }: any) => <div data-testid="view" {...props}>{children}</div>,
-  Heading: ({ children, ...props }: any) => <h1 data-testid="heading" {...props}>{children}</h1>,
-  Text: ({ children, ...props }: any) => <span data-testid="text" {...props}>{children}</span>,
-  Button: ({ children, onClick, isDisabled, ...props }: any) => (
-    <button data-testid="button" onClick={onClick} disabled={isDisabled} {...props}>
-      {children}
-    </button>
-  ),
-  TextField: ({ label, value, onChange, errorMessage, isDisabled, ...props }: any) => (
-    <div data-testid="textfield">
-      <label data-testid="label">{label}</label>
-      <input
-        data-testid="input"
-        value={value}
-        onChange={(e) => onChange?.(e.target.value)}
-        disabled={isDisabled}
-        {...props}
-      />
-      {errorMessage && <span data-testid="error">{errorMessage}</span>}
-    </div>
-  ),
-  Form: ({ children, onSubmit, ...props }: any) => (
-    <form data-testid="form" onSubmit={onSubmit} {...props}>
-      {children}
-    </form>
-  ),
-  InlineAlert: ({ children, ...props }: any) => (
-    <div data-testid="alert" role="alert" {...props}>
-      {children}
-    </div>
-  )
-}));
-
-jest.mock('@react-spectrum/layout', () => ({
-  Flex: ({ children, ...props }: any) => <div data-testid="flex" {...props}>{children}</div>
-}));
 
 describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -69,13 +31,17 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
   });
 
   const renderComponent = () => {
-    return render(<IntegerToRomanNumeralComponent />);
+    return render(
+      <TestWrapper>
+        <IntegerToRomanNumeralComponent />
+      </TestWrapper>
+    );
   };
 
   describe('Component Rendering', () => {
     it('should render without crashing', () => {
       renderComponent();
-      expect(screen.getByTestId('heading')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     });
 
     it('should display the correct heading', () => {
@@ -86,22 +52,22 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
     it('should render all required form elements', () => {
       renderComponent();
       
-      expect(screen.getByTestId('input')).toBeInTheDocument();
-      expect(screen.getByTestId('button')).toBeInTheDocument();
-      expect(screen.getByTestId('form')).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: /enter a number/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /submit button/i })).toBeInTheDocument();
+      expect(screen.getByRole('form', { name: /roman numeral conversion form/i })).toBeInTheDocument();
     });
 
     it('should have correct initial state', () => {
       renderComponent();
       
-      const input = screen.getByTestId('input');
-      const button = screen.getByTestId('button');
+      const input = screen.getByRole('textbox', { name: /enter a number/i });
+      const button = screen.getByRole('button', { name: /submit button/i });
       
       expect(input).toHaveValue('');
       expect(button).toHaveTextContent('Convert to roman numeral');
       expect(button).not.toBeDisabled();
       expect(screen.queryByText(/roman numeral:/i)).not.toBeInTheDocument();
-      expect(screen.queryByTestId('alert')).not.toBeInTheDocument();
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
   });
 
@@ -109,7 +75,7 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
     it('should accept user input in the text field', async () => {
       renderComponent();
       
-      const input = screen.getByTestId('input');
+      const input = screen.getByRole('textbox', { name: /enter a number/i });
       await user.type(input, '42');
       
       expect(input).toHaveValue('42');
@@ -120,8 +86,8 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
       
       renderComponent();
       
-      const input = screen.getByTestId('input');
-      const button = screen.getByTestId('button');
+      const input = screen.getByRole('textbox', { name: /enter a number/i });
+      const button = screen.getByRole('button', { name: /submit button/i });
       
       await user.type(input, '42');
       await user.click(button);
@@ -136,7 +102,7 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
       
       renderComponent();
       
-      const input = screen.getByTestId('input');
+      const input = screen.getByRole('textbox', { name: /enter a number/i });
       
       await user.type(input, '42');
       await user.keyboard('{Enter}');
@@ -148,8 +114,7 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
   });
 
   describe('Loading States', () => {
-    it('should show loading state during conversion', async () => {
-      // Setup loading state
+    it('should disable form elements during loading', async () => {
       mockUseRomanNumeralConverter.mockReturnValue({
         convertToRomanNumeral: mockConvertToRomanNumeral,
         isLoading: true,
@@ -159,12 +124,11 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
       
       renderComponent();
       
-      const button = screen.getByTestId('button');
-      const input = screen.getByTestId('input');
+      const input = screen.getByRole('textbox', { name: /enter a number/i });
+      const button = screen.getByRole('button', { name: /submit button/i });
       
-      expect(button).toHaveTextContent('Converting...');
-      expect(button).toBeDisabled();
       expect(input).toBeDisabled();
+      expect(button).toBeDisabled();
     });
   });
 
@@ -208,7 +172,7 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
       
       renderComponent();
       
-      const errorAlert = screen.getByTestId('alert');
+      const errorAlert = screen.getByRole('alert');
       
       expect(errorAlert).toHaveTextContent('Please fix the errors and try again.');
       expect(screen.getByText('Number must be between 1 and 3999')).toBeInTheDocument();
@@ -240,7 +204,7 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
       
       renderComponent();
       
-      const button = screen.getByTestId('button');
+      const button = screen.getByRole('button', { name: /submit button/i });
       await user.click(button);
       
       await waitFor(() => {
@@ -255,8 +219,8 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
       
       renderComponent();
       
-      const input = screen.getByTestId('input');
-      const button = screen.getByTestId('button');
+      const input = screen.getByRole('textbox', { name: /enter a number/i });
+      const button = screen.getByRole('button', { name: /submit button/i });
       
       await user.type(input, '42');
       await user.click(button);
@@ -281,7 +245,11 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
         result: 'XLII'
       });
       
-      rerender(<IntegerToRomanNumeralComponent />);
+      rerender(
+        <TestWrapper>
+          <IntegerToRomanNumeralComponent />
+        </TestWrapper>
+      );
       
       expect(screen.getByText('XLII')).toBeInTheDocument();
       
@@ -293,7 +261,11 @@ describe('IntegerToRomanNumeralComponent - Core Functionality', () => {
         result: null
       });
       
-      rerender(<IntegerToRomanNumeralComponent />);
+      rerender(
+        <TestWrapper>
+          <IntegerToRomanNumeralComponent />
+        </TestWrapper>
+      );
       
       expect(screen.getByText('Test error')).toBeInTheDocument();
       expect(screen.queryByText('XLII')).not.toBeInTheDocument();

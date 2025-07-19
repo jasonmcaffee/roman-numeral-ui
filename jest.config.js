@@ -8,11 +8,11 @@ module.exports = {
   // Module name mapping for path aliases
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '\\.(css|less|scss|sass)$': '<rootDir>/src/__mocks__/cssMock.js',
+    '\\.([a-z0-9]+)\\.([a-f0-9]+)\\.css$': '<rootDir>/src/__mocks__/cssMock.js',
+    '^.*\\.css$': '<rootDir>/src/__mocks__/cssMock.js',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/src/__mocks__/fileMock.js',
-    '\\.svg$': '<rootDir>/src/__mocks__/svgMock.js',
-    // Handle CSS modules with hash
-    '\\.([a-z0-9]+)\\.css$': 'identity-obj-proxy'
+    '\\.svg$': '<rootDir>/src/__mocks__/svgMock.js'
   },
   
   // Test file patterns
@@ -21,13 +21,24 @@ module.exports = {
     '**/*.test.(ts|tsx)'
   ],
   
-  // Transform configuration
+  // Transform configuration using @swc/jest like react-spectrum examples
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: {
-        jsx: 'react-jsx'
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: true
+          },
+          transform: {
+            react: {
+              runtime: 'automatic'
+            }
+          }
+        }
       }
-    }]
+    ]
   },
   
   // Test timeout
@@ -64,8 +75,8 @@ module.exports = {
     '/dist/'
   ],
   
-  // Transform ignore patterns - don't transform node_modules except for specific packages
+  // Transform ignore patterns - transform React Spectrum packages
   transformIgnorePatterns: [
-    'node_modules/(?!(@adobe/react-spectrum|@react-aria|@react-stately|@spectrum-css)/)'
+    'node_modules/(?!(@adobe/react-spectrum|@react-aria|@react-stately|@spectrum-css|@react-spectrum)/)'
   ]
 }; 
