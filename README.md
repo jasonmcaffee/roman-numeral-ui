@@ -1,6 +1,7 @@
-# Roman Numeral Converter
+# Roman Numeral UI
 
-A Next.js application for converting between integers and Roman numerals, built with React Spectrum components.
+A Next.js application for converting integers to Roman numerals using React Spectrum components.
+
 
 ## Features
 
@@ -11,8 +12,20 @@ A Next.js application for converting between integers and Roman numerals, built 
 
 ## Dependencies 
 
-### Adobe Spectrum
+### Next.js
+Next.js is a react framework that provides building blocks for creating fast, scalable web applications.
+- Server Side Rendering - allows fast page loads to improve SEO and UX
+- Client Side Rendering - allows for fast re-rendering of dynamic content, providing better UX
 
+### Roman Numeral Service
+The backend web service that provides the functionality related to Roman numeral conversion, etc.
+
+This project uses a openapi generated client based on the roman-numeral-openapi-spec.json provided by the service.
+
+https://github.com/jasonmcaffee/roman-numeral-service
+
+### React Spectrum
+[React Spectrum](https://react-spectrum.adobe.com/)
 #### 1. React Stately (@react-stately/*) - State Management Layer
 Platform-agnostic state management
 Responsibilities:
@@ -55,24 +68,45 @@ Then, run the development server:
 npm run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
+
+## Configuration
+
+### Environment Variables
+
+The application uses environment variables store in .env file for configuration.  You can override with .env.development, etc.
+
+- npm run dev → development
+- npm run build → production
+- npm run start → production
+
+#### Available Environment Variables
+Note: The prefix NEXT_PUBLIC_ is needed for env variables needed by the browser.
+
+- `NEXT_PUBLIC_ROMAN_NUMERAL_SERVICE_BASE_URL`: The base URL for the backend API service (default: `http://localhost:3000`)
+
+### Backend Service
+
+This UI connects to a backend Roman Numeral service. Make sure the backend service is running and accessible at the URL specified in `NEXT_PUBLIC_ROMAN_NUMERAL_SERVICE_BASE_URL`.
+
 
 ## Project Structure
 
-- `/src/app/page.tsx` - Home page with navigation
-- `/src/app/integer-to-roman/page.tsx` - Integer to Roman numeral conversion page
-- `/src/app/layout.tsx` - Root layout with React Spectrum providers
+### App
+Directory for our pages.
+
+### Components
+Where we house our components used by various pages.
+
+### Hooks
+Our components use hooks, which help us separate our business logic, api calls, etc 
+
+### Clients
+Where we store clients, including the openapi generated client for our Roman Numeral Service.
 
 ## Technologies Used
 
 - [Next.js](https://nextjs.org/) - React framework
-- [React Spectrum](https://react-spectrum.adobe.com/) - Adobe's design system
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+ - Adobe's design system
 
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
