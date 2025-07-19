@@ -24,7 +24,7 @@ jest.mock('@/config/appConfig', () => ({
 const mockRomanNumeralApi = RomanNumeralApi as jest.MockedClass<typeof RomanNumeralApi>;
 const mockConfiguration = Configuration as jest.MockedClass<typeof Configuration>;
 
-describe('IntegerToRomanNumeralComponent Integration', () => {
+describe('IntegerToRomanNumeralComponent integration with useRomanNumeralConverter hook.', () => {
   let user: ReturnType<typeof userEvent.setup>;
   let mockApiInstance: any;
 

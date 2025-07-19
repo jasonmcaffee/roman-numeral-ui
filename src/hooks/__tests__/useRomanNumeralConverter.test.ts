@@ -1,5 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useRomanNumeralConverter } from '../useRomanNumeralConverter';
+import { RomanNumeralApi, Configuration } from '@/clients/roman-numeral-client';
+import { ResponseError } from '@/clients/roman-numeral-client/runtime';
 
 // Mock the API client
 jest.mock('@/clients/roman-numeral-client', () => ({
@@ -25,7 +27,6 @@ describe('useRomanNumeralConverter hook', () => {
   let mockApiInstance: any;
   let mockRomanNumeralApi: any;
   let mockConfiguration: any;
-  let mockResponseError: any;
 
   beforeEach(() => {
     // Reset all mocks
@@ -37,8 +38,6 @@ describe('useRomanNumeralConverter hook', () => {
     };
 
     // Get the mocked classes
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { RomanNumeralApi, Configuration } = require('@/clients/roman-numeral-client');
     mockRomanNumeralApi = RomanNumeralApi;
     mockConfiguration = Configuration;
 
@@ -161,8 +160,6 @@ describe('useRomanNumeralConverter hook', () => {
       } as unknown as Response;
 
       // Use the actual ResponseError from the runtime module
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { ResponseError } = require('@/clients/roman-numeral-client/runtime');
       const responseError = new ResponseError(mockResponse);
       mockApiInstance.convertIntegerToRomanNumeral.mockRejectedValue(responseError);
 
