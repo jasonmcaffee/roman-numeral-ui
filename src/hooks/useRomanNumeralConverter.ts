@@ -1,7 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
-import {Configuration, InputValidationError, RomanNumeralApi,} from '@/clients/roman-numeral-client';
-import * as runtime from '@/clients/roman-numeral-client/runtime';
-import { appConfig } from '@/config/appConfig';
+import { RomanNumeralApi, Configuration, InputValidationError } from '../clients/roman-numeral-client';
+import * as runtime from '../clients/roman-numeral-client/runtime';
+import { appConfig } from '../config/appConfig';
+import { createLogger } from '../utils/logger';
 
 interface UseRomanNumeralConverterResult {
   convertToRomanNumeral: (input: string) => Promise<string>;
@@ -14,6 +15,7 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
+  const logger = createLogger('roman-numeral-converter');
 
   // Create API client with useMemo to prevent recreation on every render
   const api = useMemo(() => {
@@ -31,11 +33,10 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
     setError(null);
     setIsLoading(true);
 
-    // Log conversion attempt
-    console.log('Roman numeral conversion requested', {
+    // Log conversion attempt using structured logging
+    logger.info({
+      msg: 'Roman numeral conversion requested',
       input,
-      timestamp: new Date().toISOString(),
-      service: 'roman-numeral-ui',
     });
 
     try {
@@ -46,10 +47,10 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
         setError(errorMessage);
         
         // Log validation error
-        console.error('Roman numeral conversion validation error', {
+        logger.error({
+          msg: 'Roman numeral conversion validation error',
           input,
           error: errorMessage,
-          timestamp: new Date().toISOString(),
         });
         
         throw new Error(errorMessage);
@@ -61,39 +62,39 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
       
       // Log successful conversion
       const responseTime = Date.now() - startTime;
-      console.log('Roman numeral conversion successful', {
+      logger.info({
+        msg: 'Roman numeral conversion successful',
         input,
         output: romanNumeral,
         responseTime,
-        timestamp: new Date().toISOString(),
       });
       
       return romanNumeral;
-    } catch (err) {
+    } catch (err: unknown) {
       // if we have a bad request, we know that the response should be an InputValidationError
       if (err instanceof runtime.ResponseError && err.response.status == 400) {
         try{
           const inputValidationError = (await err.response.json()) as InputValidationError;
           // we only expect one here, but handle the use case where there could be multiple by joining them all together.
-          const validationErrorMessage = inputValidationError.errorDetails.map(d => d.message).join(' ');
+          const validationErrorMessage = inputValidationError.errorDetails.map((d: any) => d.message).join(' ');
           setError(validationErrorMessage);
           
           // Log validation error from API
-          console.error('Roman numeral conversion API validation error', {
+          logger.error({
+            msg: 'Roman numeral conversion API validation error',
             input,
             error: validationErrorMessage,
             status: err.response.status,
-            timestamp: new Date().toISOString(),
           });
         } catch { // if we don't get the data back in the expected format, just display a generic error.
           const genericError = 'Unknown validation issue.  Please check your input.';
           setError(genericError);
           
-          console.error('Roman numeral conversion API error parsing failed', {
+          logger.error({
+            msg: 'Roman numeral conversion API error parsing failed',
             input,
             error: genericError,
-            status: err.response.status,
-            timestamp: new Date().toISOString(),
+            status: err instanceof runtime.ResponseError ? err.response.status : 'unknown',
           });
         }
       }else{
@@ -101,17 +102,17 @@ export const useRomanNumeralConverter = (): UseRomanNumeralConverterResult => {
         setError(errorMessage);
         
         // Log general error
-        console.error('Roman numeral conversion failed', {
+        logger.error({
+          msg: 'Roman numeral conversion failed',
           input,
           error: errorMessage,
-          timestamp: new Date().toISOString(),
         });
       }
       throw new Error('error making api call');
     } finally {
       setIsLoading(false);
     }
-  }, [api]);
+  }, [api, logger]);
 
   return {
     convertToRomanNumeral,

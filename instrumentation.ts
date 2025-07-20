@@ -3,6 +3,9 @@
 
 import tracer from 'dd-trace';
 import { StatsD } from 'hot-shots';
+import { createLogger } from './src/utils/logger';
+
+const logger = createLogger('instrumentation');
 
 // Initialize StatsD for metrics
 const statsd = new StatsD({
@@ -14,12 +17,18 @@ const statsd = new StatsD({
     env: process.env.NODE_ENV || 'development',
   },
   errorHandler: (error) => {
-    console.error('StatsD error:', error);
+    logger.error({
+      msg: 'StatsD error',
+      error: error.message,
+    });
   },
 });
 
 // Initialize tracer
-console.log('Initializing Datadog tracer in instrumentation...');
+logger.info({
+  msg: 'Initializing Datadog tracer in instrumentation',
+});
+
 tracer.init({
   service: 'roman-numeral-ui',
   env: process.env.NODE_ENV || 'development',
@@ -28,7 +37,10 @@ tracer.init({
   runtimeMetrics: true,
   profiling: true,
 });
-console.log('Datadog tracer initialized in instrumentation');
+
+logger.info({
+  msg: 'Datadog tracer initialized in instrumentation',
+});
 
 // Export for use in other server-side files
 export { tracer, statsd }; 

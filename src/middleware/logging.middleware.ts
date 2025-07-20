@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createLogger } from '../utils/logger';
 
 export function loggingMiddleware(request: NextRequest) {
   const startTime = Date.now();
   const url = new URL(request.url);
   const pathname = url.pathname;
   const method = request.method;
+  const logger = createLogger('middleware');
 
   // Determine operation name based on path
   let operationName = 'page.view';
@@ -16,15 +18,14 @@ export function loggingMiddleware(request: NextRequest) {
     operationName = 'page.converter';
   }
 
-  // Log the request (this will be captured by Datadog agent)
-  console.log('Request started', {
+  // Log the request using structured logging (similar to roman-numeral-service)
+  logger.info({
+    msg: 'Request started',
     method,
     pathname,
     operation: operationName,
     url: request.url,
     userAgent: request.headers.get('user-agent'),
-    timestamp: new Date().toISOString(),
-    service: 'roman-numeral-ui',
   });
 
   try {
@@ -34,24 +35,25 @@ export function loggingMiddleware(request: NextRequest) {
     // Add response time metric
     const responseTime = Date.now() - startTime;
 
-    console.log('Request completed', {
+    logger.info({
+      msg: 'Request completed',
       method,
       pathname,
       operation: operationName,
       responseTime,
-      timestamp: new Date().toISOString(),
+      statusCode: response.status,
     });
 
     return response;
   } catch (error) {
-    // Log error
-    console.error('Request failed', {
+    // Log error using structured logging
+    logger.error({
+      msg: 'Request failed',
       method,
       pathname,
       operation: operationName,
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString(),
     });
 
     // Return error response

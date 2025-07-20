@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { tracer, statsd } from '../../../../instrumentation';
+import { createLogger } from '../../../utils/logger';
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
+  const logger = createLogger('health');
   
   // Create a span for this request
   const span = tracer.startSpan('health.check');
@@ -11,13 +13,12 @@ export async function GET(request: NextRequest) {
     // Increment request counter
     statsd.increment('health_check.requested');
     
-    // Log the health check request
-    console.log('Health check requested', {
+    // Log the health check request using structured logging
+    logger.info({
+      msg: 'Health check requested',
       method: 'GET',
       url: request.url,
       userAgent: request.headers.get('user-agent'),
-      timestamp: new Date().toISOString(),
-      service: 'roman-numeral-ui',
     });
 
     const response = NextResponse.json(
@@ -37,10 +38,10 @@ export async function GET(request: NextRequest) {
     statsd.timing('health_check.response_time', responseTime);
     statsd.increment('health_check.success');
     
-    console.log('Health check completed', {
+    logger.info({
+      msg: 'Health check completed',
       responseTime,
       status: 200,
-      timestamp: new Date().toISOString(),
     });
 
     // Set span tags
@@ -51,11 +52,11 @@ export async function GET(request: NextRequest) {
 
     return response;
   } catch (error) {
-    // Log error
-    console.error('Health check failed', {
+    // Log error using structured logging
+    logger.error({
+      msg: 'Health check failed',
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString(),
     });
 
     // Send error metrics
