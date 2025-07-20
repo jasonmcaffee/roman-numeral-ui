@@ -44,6 +44,34 @@ const nextConfig: NextConfig = {
         util: false,
       };
     }
+
+    // Add webpack.IgnorePlugin to ignore problematic GraphQL modules
+    const webpack = require('webpack');
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        checkResource(resource: string) {
+          const lazyImports = [
+            'graphql/language/printer',
+            'graphql/language/visitor',
+            'graphql/utilities',
+            'spdx-exceptions', 
+            'spdx-license-ids',
+            'spdx-license-ids/deprecated',
+          ];
+          if (!lazyImports.includes(resource)) {
+            return false;
+          }
+          try {
+            require.resolve(resource, {
+              paths: [process.cwd()],
+            });
+          } catch (err) {
+            return true;
+          }
+          return false;
+        },
+      })
+    );
     
     return config;
   },
