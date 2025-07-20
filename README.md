@@ -10,6 +10,16 @@ A Next.js application for converting integers to Roman numerals using React Spec
 - Responsive design that works on all devices
 - Built with Next.js 15 and TypeScript
 
+## UI Screens
+
+### Integer to Roman Numeral Conversion
+The main screen allows for alphanumeric  text input (TextField) rather than limited numeric input (NumberField), so we can showcase server side validation, and UI error handling.
+
+![img_5.png](img_5.png)
+
+The screen matches the user's os theme (light/dark):
+
+![img_7.png](img_7.png)
 ## Dependencies 
 
 ### Next.js
