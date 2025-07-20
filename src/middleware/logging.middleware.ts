@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function loggingMiddleware(request: NextRequest) {
   const startTime = Date.now();
   const url = new URL(request.url);
   const pathname = url.pathname;
   const method = request.method;
-  
+
   // Determine operation name based on path
   let operationName = 'page.view';
   if (pathname.startsWith('/api/')) {
@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
   } else if (pathname === '/integer-to-roman-numeral') {
     operationName = 'page.converter';
   }
-  
+
   // Log the request (this will be captured by Datadog agent)
   console.log('Request started', {
     method,
@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
 
     // Add response time metric
     const responseTime = Date.now() - startTime;
-    
+
     console.log('Request completed', {
       method,
       pathname,
@@ -56,7 +56,7 @@ export function middleware(request: NextRequest) {
 
     // Return error response
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
         timestamp: new Date().toISOString()
       },
@@ -75,4 +75,4 @@ export const config = {
      */
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
-}; 
+};
