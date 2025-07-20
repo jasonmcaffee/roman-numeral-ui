@@ -1,7 +1,7 @@
 # Roman Numeral UI
+Roman Numeral UI is a react project built using Next.js.
 
-A Next.js application for converting integers to Roman numerals using React Spectrum components.
-
+It is primarily concerned with rendering UIs, using react spectrume, that allow users to perform operations such as converting integers to Roman numerals.
 
 ## Features
 
@@ -17,7 +17,7 @@ The main screen allows for alphanumeric  text input (TextField) rather than limi
 
 ![img_5.png](img_5.png)
 
-The screen matches the user's os theme (light/dark):
+The theme of the UI will respond to and matche the user's os theme (light/dark):
 
 ![img_7.png](img_7.png)
 ## Dependencies 
@@ -80,8 +80,6 @@ Responsibilities:
 - Uses props from behavior hook and state from state hook
 - Implements Adobe's Spectrum design system
 - Can be customized with themes
-
-
 
 ## Setup
 
