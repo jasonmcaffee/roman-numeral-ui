@@ -4,7 +4,7 @@
 .PHONY: build-and-run stop
 
 build-and-run:
-	@echo "building and running roman-numeral-ui..."
+	@echo "building and running roman-numeral-ui with datadog using command line env var DD_API_KEY: $$DD_API_KEY"
 	docker-compose up -d --build
 
 stop:
